@@ -33,8 +33,7 @@ wl = [w for w in wl if p.match(w)]
 wl = list(filter(filter_beyond_len(5), wl))
 
 # Make them all lowercase
-chosen = [w.lower() for w in random.sample(wl, 3)]
-print(chosen)
+chosen = [w.lower() for w in wl]
 
 # Now we have our words for the wordsearch selected
 # The next step is to lay them out in a grid
@@ -45,7 +44,7 @@ print(chosen)
 # it.
 
 """Create a new empty NxN wordsearch grid"""
-new_grid = lambda N: [['' for i in range(N)] for j in range(N)]
+new_grid = lambda N: [[' ' for i in range(N)] for j in range(N)]
 
 def print_grid(g):
     print('-'*len(g))
@@ -55,10 +54,20 @@ def print_grid(g):
         print()
 
 def merge_grids(g1, g2):
+    g = new_grid(len(g1))
     for r in range(len(g1)):
         for c in range(len(g1)):
-            if g2[r][c] is not '':
-                g1[r][c] = g2[r][c]
+            # Try to pluck character from g2
+            if g2[r][c] != ' ':
+                if g1[r][c] in (' ', g2[r][c]):
+                    g[r][c] = g2[r][c]
+                # Failure condition
+                else:
+                    return None
+            # Otherwise pluck from g1
+            else:
+                g[r][c] = g1[r][c]
+    return g
 
 def place_word(g, w, r, c, v):
     g2 = new_grid(len(g))
@@ -67,17 +76,22 @@ def place_word(g, w, r, c, v):
     else:
         it = (0,1)
     for ch in w:
-        if g[r][c] is not '':
-            return False
         if r >= len(g) or c >= len(g):
-            return False
+            return g
+        if g[r][c] != ' ':
+            return g
         g2[r][c] = ch
         r += it[0]
         c += it[1]
-    merge_grids(g, g2)
+    retval = merge_grids(g, g2)
+    if retval is not None:
+        return retval
+    else:
+        return g
 
 g = new_grid(10)
 
-place_word(g, chosen[0], 1, 1, True)
+for i in range(1000):
+    g = place_word(g, random.choice(chosen), random.randint(0,9), random.randint(0,9), bool(random.getrandbits(1)))
 
 print_grid(g)
