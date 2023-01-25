@@ -16,11 +16,7 @@ def filter_out_nums(word):
 def filter_beyond_len(n):
     return lambda w: len(w) <= n
 
-print(list(filter(filter_out_nums, ['hello0','hello'])))
-
 wl = import_wordlist()
-print("Number of words including numbers", len(wl))
-print("Excluding numbers", len(list(filter(filter_out_nums, wl))))
 
 # Just deal with the "real" words for now and trim ws
 wl = list(map(lambda s: s.strip(),filter(filter_out_nums, wl)))
@@ -30,7 +26,7 @@ p = re.compile('^[a-zA-Z]*$')
 wl = [w for w in wl if p.match(w)]
 
 # Next, trim down to words less than a certain length
-wl = list(filter(filter_beyond_len(5), wl))
+wl = list(filter(filter_beyond_len(10), wl))
 
 # Make them all lowercase
 chosen = [w.lower() for w in wl]
@@ -47,11 +43,13 @@ chosen = [w.lower() for w in wl]
 new_grid = lambda N: [[' ' for i in range(N)] for j in range(N)]
 
 def print_grid(g):
-    print('-'*len(g))
+    print('-'*(2+len(g)))
     for r in g:
+        print('|',end='')
         for c in r:
             print(c,end='')
-        print()
+        print('|')
+    print('-'*(2+len(g)))
 
 def merge_grids(g1, g2):
     g = new_grid(len(g1))
@@ -83,15 +81,27 @@ def place_word(g, w, r, c, v):
         g2[r][c] = ch
         r += it[0]
         c += it[1]
-    retval = merge_grids(g, g2)
-    if retval is not None:
-        return retval
-    else:
-        return g
+    return merge_grids(g, g2)
 
-g = new_grid(10)
+def fill_empty(g):
+    for r in range(len(g)):
+        for c in range(len(g)):
+            if g[r][c] == ' ':
+                g[r][c] = random.choice('abcdefghijklmnopqrstuvwxyz')
 
-for i in range(1000):
-    g = place_word(g, random.choice(chosen), random.randint(0,9), random.randint(0,9), bool(random.getrandbits(1)))
+N = 10
 
+g = new_grid(N)
+
+words = []
+for i in range(10):
+    word = random.choice(chosen)
+    ret = place_word(g, word, random.randint(0,N-1), random.randint(0,N-1),
+                     bool(random.getrandbits(1)))
+    if ret is not None:
+        g = ret
+        words += [word]
+fill_empty(g)
 print_grid(g)
+for word in words:
+    print(word)
