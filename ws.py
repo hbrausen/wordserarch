@@ -59,9 +59,6 @@ def merge_grids(g1, g2):
             if g2[r][c] != ' ':
                 if g1[r][c] in (' ', g2[r][c]):
                     g[r][c] = g2[r][c]
-                # Failure condition
-                else:
-                    return None
             # Otherwise pluck from g1
             else:
                 g[r][c] = g1[r][c]
@@ -75,9 +72,9 @@ def place_word(g, w, r, c, v):
         it = (0,1)
     for ch in w:
         if r >= len(g) or c >= len(g):
-            return g
-        if g[r][c] != ' ':
-            return g
+            return None
+        if g[r][c] not in (' ', ch):
+            return None
         g2[r][c] = ch
         r += it[0]
         c += it[1]
@@ -94,7 +91,7 @@ N = 10
 g = new_grid(N)
 
 words = []
-for i in range(10):
+for i in range(1000):
     word = random.choice(chosen)
     ret = place_word(g, word, random.randint(0,N-1), random.randint(0,N-1),
                      bool(random.getrandbits(1)))
