@@ -3,7 +3,7 @@ import re
 
 """Import list of words from english wordlist"""
 def import_wordlist():
-    return [w for w in open("english-words/words.txt",'r').readlines()]
+    return [w for w in open("words_mit.txt",'r').readlines()]
 
 """Filter out any words that contain numbers"""
 def filter_out_nums(word):
@@ -91,7 +91,7 @@ N = 10
 g = new_grid(N)
 
 words = []
-for i in range(1000):
+for i in range(20):
     word = random.choice(chosen)
     ret = place_word(g, word, random.randint(0,N-1), random.randint(0,N-1),
                      bool(random.getrandbits(1)))
