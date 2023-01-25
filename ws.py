@@ -16,6 +16,9 @@ def filter_out_nums(word):
 def filter_beyond_len(n):
     return lambda w: len(w) <= n
 
+def filter_less_than_len(n):
+    return lambda w: len(w) >= n
+
 wl = import_wordlist()
 
 # Just deal with the "real" words for now and trim ws
@@ -27,6 +30,9 @@ wl = [w for w in wl if p.match(w)]
 
 # Next, trim down to words less than a certain length
 wl = list(filter(filter_beyond_len(10), wl))
+
+# Next, trim down to words more than a certain length
+wl = list(filter(filter_less_than_len(3), wl))
 
 # Make them all lowercase
 chosen = [w.lower() for w in wl]
